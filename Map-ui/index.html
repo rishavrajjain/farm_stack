@@ -1,0 +1,93 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>ArcGIS JavaScript Tutorials: Edit feature data </title>
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.20/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.20/"></script>
+  <script>
+
+    require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/MapView",
+
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Editor",
+      "esri/widgets/Locate",
+      "esri/widgets/Print"
+
+    ], function(esriConfig,Map, MapView, FeatureLayer, Editor,Locate,Print) {
+
+      // Reference a feature layer to edit
+      const myPointsFeatureLayer = new FeatureLayer({
+        url: "https://services3.arcgis.com/3VDvVphhi2237OQF/arcgis/rest/services/features/FeatureServer/0"
+      });
+
+      esriConfig.apiKey = "AAPK74b7a136ddd140b6a69024cebbc9c185aeMbHieIQ-A4RI_Y1U_fZDF4ahuJtBbb4YCJIqV0gMpfdjK0nRySxlhynzQYxPZA";
+
+      const map = new Map({
+        basemap: "arcgis-topographic", // Basemap layer service
+
+        layers: [myPointsFeatureLayer]
+
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-118.80543,34.02700],
+        zoom: 13
+      });
+
+     
+
+      
+
+      
+
+      // Editor widget
+      const editor = new Editor({
+        view: view
+      });
+      // Add widget to the view
+      view.ui.add(editor, "top-right");
+
+      const locate = new Locate({
+          view: view,
+          useHeadingEnabled: false,
+          goToOverride: function(view, options) {
+            options.target.scale = 1500;
+            return view.goTo(options.target);
+          }
+        });
+        view.ui.add(locate, "top-left");
+
+        view.when(function() {
+          var print = new Print({
+            view: view,
+            // specify your own print service
+            printServiceUrl:
+              "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+          });
+
+          // Add widget to the top right corner of the view
+          view.ui.add(print, "top-right");
+        });
+
+    });
+
+  </script>
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>
